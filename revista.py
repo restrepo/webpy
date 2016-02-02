@@ -36,7 +36,7 @@ def OUTPUT(art,output='udea'):
     a=''
     if art.to_dict().has_key('author'):
         for d in art.author:
-            a=a+'<strong>Autores:</strong> %s %s <br/>\n' %(d['given'],d['family'])
+            a=a+'%s %s <br/>\n' %(d['given'],d['family'])
     
             art['autores']=a
         
@@ -56,11 +56,12 @@ def OUTPUT(art,output='udea'):
         names['ISSN']='ISSN'
         names['redirect']='URL'
 
-    r=''
+    r='<table>'
+    
     for k in names.keys():
         if art.to_dict().has_key(k):
-            r=r+'<strong>%s:</strong> %s <br/>\n' %(names[k],art[k])
-
+            r=r+'<tr><td><strong>%s</strong></td><td> %s </td></tr>\n' %(names[k],art[k])
+    r=r+'</table>'
     return r
             
 if __name__ == "__main__":
