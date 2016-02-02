@@ -118,6 +118,9 @@ if __name__ == "__main__":
             publindex=read_google_cvs(gss_key='1sAN9w7QYxmONArmhfWMOFoebmGKf1qnkKdHy4OAsjD0',gss_query='select+*')
             art['ISSN_colciencias']=publindex[publindex.TITULO==art['container-title']].ISSN.values[0]
             art['ISSN_type']=publindex[publindex.TITULO==art['container-title']]['CATEGORIA'].values[0]
+            art['country']=publindex[publindex.TITULO==art['container-title']]['country'].values[0]
+            art['city']=publindex[publindex.TITULO==art['container-title']]['city'].values[0]
+            art['language']=publindex[publindex.TITULO==art['container-title']]['language'].values[0]
         else:
             art['ISSN_colciencias']=''
             art['ISSN_type']=''
