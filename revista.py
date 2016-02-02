@@ -34,38 +34,76 @@ def read_google_cvs(gss_url="http://spreadsheets.google.com",\
 def OUTPUT(art,output='udea'):
     from collections import OrderedDict
     a=''
-    if art.to_dict().has_key('author'):
+    if 'author' in art.keys():
         for d in art.author:
             a=a+'%s %s <br/>\n' %(d['given'],d['family'])
     
             art['autores']=a
         
     art['indexacion']='ISI, Scopus'
-    if art.to_dict().has_key('link'):
+    if 'link' in art.keys():
         art['redirect']='<a href="%s">%s</a>' %(art.link[0]['URL'],\
                                             art.link[0]['URL'])
+    if 'issued' in art.keys(): 
+        if 'date-parts' in art['issued'].keys():
+            if len(art['issued']['date-parts'][0])>=1:
+                art['year']=art['issued']['date-parts'][0][0]
+            if len(art['issued']['date-parts'][0])>=2:
+                art['month']=art['issued']['date-parts'][0][1]
+            if len(art['issued']['date-parts'][0])>=3:
+                art['day']=art['issued']['date-parts'][0][2]
+                
+    if output=='udea':
+        date_parts=['year','month','day','volume','article-number']
+        for dp in date_parts:
+            if dp in art.keys():             
+                art[dp]=','.join(list(str(art[dp])))
+            
     if output=='udea':
         names=OrderedDict()
-        names['title']=u'Título del articulo'
+        names['title']=u'Título del artículo'
         names['container-title']='Nombre de la revista'
-        names['autores']='Autores'
-        names['indexacion']='Indexacion'
         names['DOI']='DOI'
+        names['publisher']=u'Institución que publica'
+        names['country']=u'País'
+        names['city']=u'Ciudad'
         names['ISSN_colciencias']='ISSN Colciencias'
-        names['ISSN_type']='Clasificacion Colciencias'
+        names['language']='Idioma'
+        names['year']=u'Año'
+        names['month']='Mes'
+        names['day']=u'Día'
+        names['volume']='Volumen'
+        names['article-number']=u'Número'
+        names['pages']=u'Nro páginas'
+        names['tiraje']=u'Tiraje'
+        names['revista']='Revista'
+        names['fotocopia']='Fotocopia'
+        names['otro']='Otro'
+        names['date-year']=u'Fecha presentación: Año'
+        names['date-month']=u'Fecha presentación: Mes'
+        names['date-day']=u'Fecha presentación: Día'
+        names['autores']='Autores'
+        names['ISSN_type']=u'Clasificación Colciencias'
         names['ISSN']='ISSN'
         names['redirect']='URL'
 
-    r='<table>'
+    r=''
+    if output=='udea':
+        r=r+'''Copy the next table and paste into the Copy sheet of:
+               <a href="https://goo.gl/WnSY7M">"Formato revista"</a>,<br/>
+               and fill the empy fields in that Copy sheet<br/>'''
+    r=r+'<table border="1">'
     
     for k in names.keys():
-        if art.to_dict().has_key(k):
-            r=r+'<tr><td><strong>%s</strong></td><td> %s </td></tr>\n' %(names[k],art[k])
+        if not k in art.keys():
+            art[k]=''
+            
+        r=r+'<tr><td><strong>%s</strong></td><td> %s </td></tr>\n' %(names[k],art[k])
     r=r+'</table>'
     return r
             
 if __name__ == "__main__":
-    Colciencias=False
+    Colciencias=True
     if sys.argv[1]:
         doi=sys.argv[1]
         
