@@ -91,7 +91,9 @@ def OUTPUT(art,output='udea'):
     if output=='udea':
         r=r+'''Copy the next table and paste into the Copy sheet of:
                <a href="https://goo.gl/WnSY7M">"Formato revista"</a>,<br/>
-               and fill the empy fields in that Copy sheet<br/>'''
+               and fill the empy fields in that Copy sheet.<br/>
+               Fill (or fix) for ISSN Colciencias, journal country, city and language at: 
+               <a href="https://goo.gl/5nfX7c">https://goo.gl/5nfX7c</a><br/>'''
     r=r+'<table border="1">'
     
     for k in names.keys():
@@ -118,9 +120,9 @@ if __name__ == "__main__":
             publindex=read_google_cvs(gss_key='1sAN9w7QYxmONArmhfWMOFoebmGKf1qnkKdHy4OAsjD0',gss_query='select+*')
             art['ISSN_colciencias']=publindex[publindex.TITULO==art['container-title']].ISSN.values[0]
             art['ISSN_type']=publindex[publindex.TITULO==art['container-title']]['CATEGORIA'].values[0]
-            art['country']=publindex[publindex.TITULO==art['container-title']]['country'].values[0]
-            art['city']=publindex[publindex.TITULO==art['container-title']]['city'].values[0]
-            art['language']=publindex[publindex.TITULO==art['container-title']]['language'].values[0]
+            art['country']=publindex[publindex.TITULO==art['container-title']]['country'].values[0].decode('utf-8')
+            art['city']=publindex[publindex.TITULO==art['container-title']]['city'].values[0].decode('utf-8')
+            art['language']=publindex[publindex.TITULO==art['container-title']]['language'].values[0].decode('utf-8')
         else:
             art['ISSN_colciencias']=''
             art['ISSN_type']=''
