@@ -32,6 +32,7 @@ def read_google_cvs(gss_url="http://spreadsheets.google.com",\
 
 
 def OUTPUT(art,output='udea'):
+    import time
     from collections import OrderedDict
     a=''
     if 'author' in art.keys():
@@ -58,6 +59,16 @@ def OUTPUT(art,output='udea'):
         for dp in date_parts:
             if dp in art.keys():             
                 art[dp]=','.join(list(str(art[dp])))
+                    
+        tl=time.localtime()
+        art['date-year']=','.join(list(str( tl.tm_year  )))
+        prtm=''; prtd=''
+        if tl.tm_mon<10:
+            prtm='0'
+        if tl.tm_mday<10:
+            prtd='0'
+        art['date-month']=','.join(list(prtm+str( tl.tm_mon  )))
+        art['date-day']=','.join(list(prtd+str( tl.tm_mday  ))) 
             
     if output=='udea':
         names=OrderedDict()
