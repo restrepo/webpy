@@ -1,4 +1,4 @@
-DOI:
+DOI (and hit ENTER):
 <form>
 <input name="doi" type="text" />
 </form>
