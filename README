@@ -1,8 +1,7 @@
-Query the DOI API to get the json metadata from DOI:
+Query the DOI API to get the json metadata from DOI with:
 
-Python version
+(Python version of the API)
   import  requests
-
   requests.get(DOI_url,headers ={'Accept': 'application/citeproc+json'}).json()
         
 and output:
