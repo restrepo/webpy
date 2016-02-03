@@ -1,11 +1,29 @@
-Generate table, and paste the result into the Copy Sheet of:
+Query the DOI API to get the json metadata from DOI:
 
-Old (English)
-WARNING: set output='udea' in main code.
+Python version
+  import  requests
 
-https://docs.google.com/spreadsheets/d/1LrG6S2OULzxMD5pJFs2gPFxSHePpvc5Z4mJeA1jNVTA (File -> Make a copy)
+  requests.get(DOI_url,headers ={'Accept': 'application/citeproc+json'}).json()
+        
+and output:
 
-Once, paste, the data in the main form in "Articulo Revista" Sheet, will de automatically fille
+1) HTML. See  http://gfif.udea.edu.co/python/revista.php
+
+2) XML to automatically fill the Google spreadsheet:
+
+https://goo.gl/tw8VOv
+
+with a custom script in the "Copy" sheet which uses the DOI as input.
+Please make a copy to try another DOI.
+
+See http://gfif.udea.edu.co/python/revista.xml
+
+3) An enhanced json output file.
+
+See http://gfif.udea.edu.co/python/revista.json
+
+
+Desktop mode:
 
 USAGE: ./revista.py DOI
 
@@ -13,17 +31,16 @@ We can use either the ipynb version (revista.ipynb) or the web interface: revist
 
 http://gfif.udea.edu.co/python/revista.php
 
-Fill Country of City of the Publindex journal at:
+Manually fill Country of City of the Publindex journal at:
 
 https://docs.google.com/spreadsheets/d/1sAN9w7QYxmONArmhfWMOFoebmGKf1qnkKdHy4OAsjD0/edit#gid=1189451937
 
-TODO: use format udea as optional input parameter
 
-New (Spanish)
+Spanish version:
 
 Hemos creado una herramienta para el llenado automático a partir del DOI de los formatos del  comité de asignación de puntajes para revistas internacionales (http://docencia.udea.edu.co -> Comités).
 
-Para usarla se debe usar el correo institucional para hacer una copia de la hoja de cálculo de Google:
+Para usarla se debe hacer una copia de la hoja de cálculo de Google:
 
 https://goo.gl/tw8VOv
 
