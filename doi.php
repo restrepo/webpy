@@ -1,6 +1,6 @@
 <form>
 Title:<br/>
-<input name="title" type="text"><br/>
+<input name="title" type="text" size='60'><br/>
 First author surname:<br/>
 <input name="surname" type="text"><br/>
 <input type="submit" value="Submit">
