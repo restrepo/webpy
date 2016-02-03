@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
+import json
 import urllib2
 import requests
 import pandas as pd
@@ -143,6 +144,7 @@ def OUTPUT(art,output='udea',verbose=True):
     return {'udea_html':rhtml,'udea_xml':rxml,'article':art}
             
 if __name__ == "__main__":
+    
     cvsout=pd.DataFrame()
     Colciencias=True; verbose=False
     output='udea'
@@ -166,11 +168,12 @@ if __name__ == "__main__":
         else:
             art['ISSN_colciencias']=''
             art['ISSN_type']=''
-
+        
+        xname='revista.xml'
         if art.shape[0]>0:
             ro=OUTPUT(art,output=output)
             print ro['udea_html'].encode('utf-8')
-            f=open('revista.xml','w')
+            f=open(xname,'w')
             f.write(ro['udea_xml'].encode('utf-8'))
             f.close()
 
@@ -182,6 +185,13 @@ if __name__ == "__main__":
             if len(abstract)>1:
                 print '<strong>Abstract:</strong>%s' %abstract[1]
                 
-        print '<br/><code>'
-        print ro['article'].to_dict()
-        print '</code>'
+        baseurl='http://gfif.udea.edu.co/python/'
+        print '<br/>xml output at %s%s <br/>' %(baseurl,xname)
+        jname='revista.json'
+        print '<br/>Jason output at %s%s <br/>' %(baseurl,jname)
+        
+        with open(jname, 'w') as fp:
+            json.dump(ro['article'].to_dict(), fp)
+        #json load:
+        #with open('data.json', 'r') as fp:
+        #data = json.load(fp)
