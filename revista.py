@@ -31,7 +31,7 @@ def read_google_cvs(gss_url="http://spreadsheets.google.com",\
     return pd.read_csv(gfile,keep_default_na=gss_keep_default_na)
 
 
-def OUTPUT(art,output='udea',verbose=False):
+def OUTPUT(art,output='udea',verbose=True):
     import time
     from collections import OrderedDict
     a=''
@@ -54,11 +54,20 @@ def OUTPUT(art,output='udea',verbose=False):
             if len(art['issued']['date-parts'][0])>=3:
                 art['day']=art['issued']['date-parts'][0][2]
                 
-    if output=='udea' or output=='xml':
+    if output=='udea':
+        #special output for udea spreasheet format
         date_parts=['year','month','day','volume','article-number']
         for dp in date_parts:
-            if dp in art.keys():             
+            if dp in art.keys():
                 art[dp]=','.join(list(str(art[dp])))
+                
+        if 'page' in art.keys():
+            pages=art['page'].split('-')
+            if len(pages)==2:
+                art['pages']=','.join(list(str( -eval(art['page']) ) ))
+        
+        if not 'article-number' in art.keys():
+            art['article-number']=','.join(list(str(pages[0])))
                     
         tl=time.localtime()
         art['date-year']=','.join(list(str( tl.tm_year  )))
@@ -70,7 +79,7 @@ def OUTPUT(art,output='udea',verbose=False):
         art['date-month']=','.join(list(prtm+str( tl.tm_mon  )))
         art['date-day']=','.join(list(prtd+str( tl.tm_mday  ))) 
             
-    if output=='udea' or output=='xml':
+    if output=='udea':
         names=OrderedDict()
         names['title']=u'Título del artículo'
         names['container-title']='Nombre de la revista'
@@ -98,43 +107,45 @@ def OUTPUT(art,output='udea',verbose=False):
         names['ISSN']='ISSN'
         names['redirect']='URL'
 
-    r=''
+    rhtml=''; rxml=''
     if output=='udea' and verbose:
-        r=r+'''Copy the next table and paste into the Copy sheet of:
+        rhtml=rhtml+'''Copy the next table and paste into the Copy sheet of:
                <a href="https://goo.gl/WnSY7M">"Formato revista"</a>,<br/>
                and fill the empy fields in that Copy sheet.<br/>
                Fill (or fix) for ISSN Colciencias, journal country, city and language at: 
                <a href="https://goo.gl/5nfX7c">https://goo.gl/5nfX7c</a><br/>'''
     if output=='udea':
-        r=r+'<table border="1">'
+        rhtml=rhtml+'<table border="1">'
 
-    if output=='xml':
-        r=r+'<?xml version="1.0" encoding="UTF-8"?>\n'
-        r=r+'<?xml-stylesheet type="text/xsl" media="screen" href="/~d/styles/atom10full.xsl"?><?xml-stylesheet type="text/css" media="screen" href="http://feeds.feedburner.com/~d/styles/itemcontent.css"?>\n'
-        r=r+'<feed xmlns="http://www.w3.org/2005/Atom" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/" xmlns:blogger="http://schemas.google.com/blogger/2008" xmlns:georss="http://www.georss.org/georss" xmlns:gd="http://schemas.google.com/g/2005" xmlns:thr="http://purl.org/syndication/thread/1.0" xmlns:feedburner="http://rssnamespace.org/feedburner/ext/1.0">\n'
+    if output=='udea':
+        rxml=rxml+'<?xml version="1.0" encoding="UTF-8"?>\n'
+        rxml=rxml+'<?xml-stylesheet type="text/xsl" media="screen" href="/~d/styles/atom10full.xsl"?><?xml-stylesheet type="text/css" media="screen" href="http://feeds.feedburner.com/~d/styles/itemcontent.css"?>\n'
+        rxml=rxml+'<feed xmlns="http://www.w3.org/2005/Atom" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/" xmlns:blogger="http://schemas.google.com/blogger/2008" xmlns:georss="http://www.georss.org/georss" xmlns:gd="http://schemas.google.com/g/2005" xmlns:thr="http://purl.org/syndication/thread/1.0" xmlns:feedburner="http://rssnamespace.org/feedburner/ext/1.0">\n'
     
     for k in names.keys():
         if not k in art.keys():
             art[k]=''
             
         if output=='udea':
-            r=r+'<tr><td><strong>%s</strong></td><td> %s </td></tr>\n' %(names[k],art[k])
+            rhtml=rhtml+'<tr><td><strong>%s</strong></td><td> %s </td></tr>\n' %(names[k],art[k])
 
-        if output=='xml':
-            r=r+'<entry>\n'
-            r=r+'<title type="text">%s</title><published>%s</published>' %(names[k],art[k])
-            r=r+'</entry>\n'
+        if output=='udea':
+            rxml=rxml+'<entry>\n'
+            rxml=rxml+'<title type="text">%s</title><published>%s</published>' %(names[k],art[k])
+            rxml=rxml+'</entry>\n'
 
     if output=='udea':
-        r=r+'</table>'
-    if output=='xml':
-        r=r+'</feed>\n'
+        rhtml=rhtml+'</table>'
+    if output=='udea':
+        rxml=rxml+'</feed>\n'
 
-    return r
+    
+    return {'udea_html':rhtml,'udea_xml':rxml,'article':art}
             
 if __name__ == "__main__":
+    cvsout=pd.DataFrame()
     Colciencias=True; verbose=False
-    output='xml'
+    output='udea'
     if sys.argv[1]:
         doi=sys.argv[1]
         
@@ -158,12 +169,10 @@ if __name__ == "__main__":
 
         if art.shape[0]>0:
             ro=OUTPUT(art,output=output)
-            if output=='udea':
-                print ro.encode('utf-8')
-            if output=='xml':
-                f=open('revista.xml','w')
-                f.write(ro.encode('utf-8'))
-                f.close()
+            print ro['udea_html'].encode('utf-8')
+            f=open('revista.xml','w')
+            f.write(ro['udea_xml'].encode('utf-8'))
+            f.close()
 
 
         if verbose:
@@ -172,3 +181,7 @@ if __name__ == "__main__":
             abstract = response.read().split('Abstract')
             if len(abstract)>1:
                 print '<strong>Abstract:</strong>%s' %abstract[1]
+                
+        print '<br/><code>'
+        print ro['article'].to_dict()
+        print '</code>'
