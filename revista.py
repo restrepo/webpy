@@ -31,7 +31,7 @@ def read_google_cvs(gss_url="http://spreadsheets.google.com",\
     return pd.read_csv(gfile,keep_default_na=gss_keep_default_na)
 
 
-def OUTPUT(art,output='udea'):
+def OUTPUT(art,output='udea',verbose=False):
     import time
     from collections import OrderedDict
     a=''
@@ -54,7 +54,7 @@ def OUTPUT(art,output='udea'):
             if len(art['issued']['date-parts'][0])>=3:
                 art['day']=art['issued']['date-parts'][0][2]
                 
-    if output=='udea':
+    if output=='udea' or output=='xml':
         date_parts=['year','month','day','volume','article-number']
         for dp in date_parts:
             if dp in art.keys():             
@@ -70,7 +70,7 @@ def OUTPUT(art,output='udea'):
         art['date-month']=','.join(list(prtm+str( tl.tm_mon  )))
         art['date-day']=','.join(list(prtd+str( tl.tm_mday  ))) 
             
-    if output=='udea':
+    if output=='udea' or output=='xml':
         names=OrderedDict()
         names['title']=u'Título del artículo'
         names['container-title']='Nombre de la revista'
@@ -99,24 +99,42 @@ def OUTPUT(art,output='udea'):
         names['redirect']='URL'
 
     r=''
-    if output=='udea':
+    if output=='udea' and verbose:
         r=r+'''Copy the next table and paste into the Copy sheet of:
                <a href="https://goo.gl/WnSY7M">"Formato revista"</a>,<br/>
                and fill the empy fields in that Copy sheet.<br/>
                Fill (or fix) for ISSN Colciencias, journal country, city and language at: 
                <a href="https://goo.gl/5nfX7c">https://goo.gl/5nfX7c</a><br/>'''
-    r=r+'<table border="1">'
+    if output=='udea':
+        r=r+'<table border="1">'
+
+    if output=='xml':
+        r=r+'<?xml version="1.0" encoding="UTF-8"?>\n'
+        r=r+'<?xml-stylesheet type="text/xsl" media="screen" href="/~d/styles/atom10full.xsl"?><?xml-stylesheet type="text/css" media="screen" href="http://feeds.feedburner.com/~d/styles/itemcontent.css"?>\n'
+        r=r+'<feed xmlns="http://www.w3.org/2005/Atom" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/" xmlns:blogger="http://schemas.google.com/blogger/2008" xmlns:georss="http://www.georss.org/georss" xmlns:gd="http://schemas.google.com/g/2005" xmlns:thr="http://purl.org/syndication/thread/1.0" xmlns:feedburner="http://rssnamespace.org/feedburner/ext/1.0">\n'
     
     for k in names.keys():
         if not k in art.keys():
             art[k]=''
             
-        r=r+'<tr><td><strong>%s</strong></td><td> %s </td></tr>\n' %(names[k],art[k])
-    r=r+'</table>'
+        if output=='udea':
+            r=r+'<tr><td><strong>%s</strong></td><td> %s </td></tr>\n' %(names[k],art[k])
+
+        if output=='xml':
+            r=r+'<entry>\n'
+            r=r+'<title type="text">%s</title><published>%s</published>' %(names[k],art[k])
+            r=r+'</entry>\n'
+
+    if output=='udea':
+        r=r+'</table>'
+    if output=='xml':
+        r=r+'</feed>\n'
+
     return r
             
 if __name__ == "__main__":
-    Colciencias=True
+    Colciencias=True; verbose=False
+    output='xml'
     if sys.argv[1]:
         doi=sys.argv[1]
         
@@ -139,12 +157,18 @@ if __name__ == "__main__":
             art['ISSN_type']=''
 
         if art.shape[0]>0:
-            ro=OUTPUT(art)#.enconde('utf-8')
-            print ro.encode('utf-8')
+            ro=OUTPUT(art,output=output)
+            if output=='udea':
+                print ro.encode('utf-8')
+            if output=='xml':
+                f=open('revista.xml','w')
+                f.write(ro.encode('utf-8'))
+                f.close()
 
 
-        url='http://inspirehep.net/search?p=%s&of=hd' %doi
-        response = urllib2.urlopen(url)
-        abstract = response.read().split('Abstract')
-        if len(abstract)>1:
-            print '<strong>Abstract:</strong>%s' %abstract[1]
+        if verbose:
+            url='http://inspirehep.net/search?p=%s&of=hd' %doi
+            response = urllib2.urlopen(url)
+            abstract = response.read().split('Abstract')
+            if len(abstract)>1:
+                print '<strong>Abstract:</strong>%s' %abstract[1]
