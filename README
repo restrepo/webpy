@@ -50,3 +50,7 @@ Para generar los PDF, desde cada hoja
 File -> Download as -> PDF
 
 y seleccionar "Portrait" (deseleccionar "Repeat row headers on each page")
+
+=========
+LICENSE: GPL: www.gnu.org/licenses/gpl-3.0.en.html
+

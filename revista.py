@@ -189,6 +189,7 @@ if __name__ == "__main__":
         print '<br/>xml output at %s%s <br/>' %(baseurl,xname)
         jname='revista.json'
         print '<br/>Jason output at %s%s <br/>' %(baseurl,jname)
+        print '<br/><br/>Code at <a href="https://github.com/restrepo/webpy">Github</a></br>'
         
         with open(jname, 'w') as fp:
             json.dump(ro['article'].to_dict(), fp)
