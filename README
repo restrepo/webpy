@@ -1,0 +1,36 @@
+Generate table, and paste the result into the Copy Sheet of:
+
+Old (English)
+WARNING: set output='udea' in main code.
+
+https://docs.google.com/spreadsheets/d/1LrG6S2OULzxMD5pJFs2gPFxSHePpvc5Z4mJeA1jNVTA (File -> Make a copy)
+
+Once, paste, the data in the main form in "Articulo Revista" Sheet, will de automatically fille
+
+USAGE: ./revista.py DOI
+
+We can use either the ipynb version (revista.ipynb) or the web interface: revista.php as in:
+
+http://gfif.udea.edu.co/python/revista.php
+
+Fill Country of City of the Publindex journal at:
+
+https://docs.google.com/spreadsheets/d/1sAN9w7QYxmONArmhfWMOFoebmGKf1qnkKdHy4OAsjD0/edit#gid=1189451937
+
+TODO: use format udea as optional input parameter
+
+New (Spanish)
+
+Hemos creado una herramienta para el llenado automático a partir del DOI de los formatos del  comité de asignación de puntajes para revistas internacionales (http://docencia.udea.edu.co -> Comités).
+
+Para usarla se debe usar el correo institucional para hacer una copia de la hoja de cálculo de Google:
+
+https://goo.gl/tw8VOv
+
+Ir a la hoja "Copy" y cambiar el DOI en la celda correspondiente. Después de algunos segundos la mayoría de las celdas de los dos primera hojas con los formatos se actualizan automáticamente.
+
+Para generar los PDF, desde cada hoja
+
+File -> Download as -> PDF
+
+y seleccionar "Portrait" (deseleccionar "Repeat row headers on each page")
