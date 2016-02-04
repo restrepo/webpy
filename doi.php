@@ -1,3 +1,6 @@
+<html>
+<head></head>
+<body>
 <form>
 Title:<br/>
 <input name="title" type="text" size='60'><br/>
@@ -14,3 +17,5 @@ First author surname:<br/>
   }
 //phpinfo();
 ?>
+</body>
+</html>

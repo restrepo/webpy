@@ -5,11 +5,6 @@ Search doi by title and fist author surname
     See: http://www.crossref.org/guestquery/#textsearch
 '''
 def searchdoi(title='a model of  leptons', surname='Weinberg'):
-    import re
-    import urllib
-    from bs4 import BeautifulSoup
-    import httplib
-    
     """
     based on https://github.com/torfbolt/DOI-finder
     See: http://www.crossref.org/guestquery/
@@ -25,21 +20,28 @@ def searchdoi(title='a model of  leptons', surname='Weinberg'):
 
        where 'Author' is really the surname of the first author
     """
+    import mechanize
+    import re
+    from bs4 import BeautifulSoup
+    
     title = re.sub(r"\$.*?\$","",title) # better remove all math expressions
     title = re.sub(r"[^a-zA-Z0-9 ]", " ", title) #remove non standard characters
     surname = re.sub(r"[{}'\\]","", surname) #remove non standard characters
-    params = urllib.urlencode({"titlesearch":"titlesearch", "auth2" : surname, "atitle2" : title, "multi_hit" : "on", "article_title_search" : "Search", "queryType" : "author-title"})
-    headers = {"User-Agent": "Mozilla/5.0" , "Accept": "text/html", "Content-Type" : "application/x-www-form-urlencoded", "Host" : "www.crossref.org"}
-    conn = httplib.HTTPConnection("www.crossref.org:80")
-    conn.request("POST", "/guestquery/", params, headers)
-    response = conn.getresponse()
-    # print response.status, response.reason
-    data = response.read()
-    conn.close()
-    result = re.findall(r"\<table cellspacing=1 cellpadding=1 width=600 border=0\>.*?\<\/table\>" ,data, re.DOTALL)
-    if (len(result) > 0):
-        html=urllib.unquote_plus(result[0])
-        #doi=re.sub('.*dx.doi.org\/(.*)<\/a>.*','\\1',doitmp)
+
+    browser = mechanize.Browser()
+    browser.set_handle_robots(False)
+    browser.addheaders = [('User-agent', 'Firefox')] 
+    browser.open("http://www.crossref.org/guestquery/")
+    assert browser.viewing_html()
+    browser.select_form(name="form2")
+    # use only surname of first author
+    browser["auth2"] =  surname
+    browser["atitle2"] = title
+    response = browser.submit()
+    sourcecode = response.get_data()
+    result = re.findall(r"\<table cellspacing=1 cellpadding=1 width=600 border=0\>.*?\<\/table\>" ,sourcecode, re.DOTALL)
+    if len(result) > 0:
+        html=result[0] 
         if re.search('No DOI found',html):
             html='<table><tr><td>No DOI found<td></tr></table>'
     else:
