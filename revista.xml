@@ -2,33 +2,33 @@
 <?xml-stylesheet type="text/xsl" media="screen" href="/~d/styles/atom10full.xsl"?><?xml-stylesheet type="text/css" media="screen" href="http://feeds.feedburner.com/~d/styles/itemcontent.css"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/" xmlns:blogger="http://schemas.google.com/blogger/2008" xmlns:georss="http://www.georss.org/georss" xmlns:gd="http://schemas.google.com/g/2005" xmlns:thr="http://purl.org/syndication/thread/1.0" xmlns:feedburner="http://rssnamespace.org/feedburner/ext/1.0">
 <entry>
-<title type="text">Título del artículo</title><published>Antenatal Betamethasone for Women at Risk for Late Preterm Delivery</published></entry>
+<title type="text">Título del artículo</title><published>Nonlinear optical response in a zincblende GaN cylindrical quantum dot with donor impurity center</published></entry>
 <entry>
-<title type="text">Nombre de la revista</title><published>New England Journal of Medicine</published></entry>
+<title type="text">Nombre de la revista</title><published>Physica B: Condensed Matter</published></entry>
 <entry>
-<title type="text">DOI</title><published>10.1056/nejmoa1516783</published></entry>
+<title type="text">DOI</title><published>10.1016/j.physb.2015.12.038</published></entry>
 <entry>
-<title type="text">Institución que publica</title><published>New England Journal of Medicine (NEJM/MMS)</published></entry>
+<title type="text">Institución que publica</title><published>Elsevier BV</published></entry>
 <entry>
-<title type="text">País</title><published></published></entry>
+<title type="text">País</title><published>Holanda</published></entry>
 <entry>
-<title type="text">Ciudad</title><published></published></entry>
+<title type="text">Ciudad</title><published>Amsterdam</published></entry>
 <entry>
-<title type="text">ISSN Colciencias</title><published>0028-4793</published></entry>
+<title type="text">ISSN Colciencias</title><published>0921-4526</published></entry>
 <entry>
 <title type="text">Idioma</title><published></published></entry>
 <entry>
-<title type="text">Año</title><published>2,0,1,6</published></entry>
+<title type="text">Año</title><published>2,0,1,5</published></entry>
 <entry>
-<title type="text">Mes</title><published>2</published></entry>
+<title type="text">Mes</title><published>1,2</published></entry>
 <entry>
-<title type="text">Día</title><published>4</published></entry>
+<title type="text">Día</title><published>3,1</published></entry>
 <entry>
-<title type="text">Volumen</title><published></published></entry>
+<title type="text">Volumen</title><published>4,8,4</published></entry>
 <entry>
-<title type="text">Número</title><published>1,6,0,2,0,4,0,5,0,0,1,0,0,0,6</published></entry>
+<title type="text">Número</title><published>7,3</published></entry>
 <entry>
-<title type="text">Nro páginas</title><published></published></entry>
+<title type="text">Nro páginas</title><published>9</published></entry>
 <entry>
 <title type="text">Tiraje</title><published></published></entry>
 <entry>
@@ -44,32 +44,15 @@
 <entry>
 <title type="text">Fecha presentación: Día</title><published>0,6</published></entry>
 <entry>
-<title type="text">Autores</title><published>Cynthia Gyamfi-Bannerman <br/>
-Elizabeth A. Thom <br/>
-Sean C. Blackwell <br/>
-Alan T.N. Tita <br/>
-Uma M. Reddy <br/>
-George R. Saade <br/>
-Dwight J. Rouse <br/>
-David S. McKenna <br/>
-Erin A.S. Clark <br/>
-John M. Thorp <br/>
-Edward K. Chien <br/>
-Alan M. Peaceman <br/>
-Ronald S. Gibbs <br/>
-Geeta K. Swamy <br/>
-Mary E. Norton <br/>
-Brian M. Casey <br/>
-Steve N. Caritis <br/>
-Jorge E. Tolosa <br/>
-Yoram Sorokin <br/>
-J. Peter VanDorsten <br/>
-Lucky Jain <br/>
+<title type="text">Autores</title><published>Jaime H. Hoyos <br/>
+J.D. Correa <br/>
+M.E. Mora-Ramos <br/>
+C.A. Duque <br/>
 </published></entry>
 <entry>
 <title type="text">Clasificación Colciencias</title><published>A1</published></entry>
 <entry>
-<title type="text">ISSN</title><published>[u'0028-4793', u'1533-4406']</published></entry>
+<title type="text">ISSN</title><published>[u'0921-4526']</published></entry>
 <entry>
-<title type="text">URL</title><published></published></entry>
+<title type="text">URL</title><published><a href="http://api.elsevier.com/content/article/PII:S0921452615303707?httpAccept=text/xml">http://api.elsevier.com/content/article/PII:S0921452615303707?httpAccept=text/xml</a></published></entry>
 </feed>

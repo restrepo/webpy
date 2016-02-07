@@ -5,6 +5,7 @@ import json
 import urllib2
 import requests
 import pandas as pd
+from datetime import datetime
 pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.max_colwidth',500)
@@ -46,16 +47,22 @@ def OUTPUT(art,output='udea',verbose=True):
     if 'link' in art.keys():
         art['redirect']='<a href="%s">%s</a>' %(art.link[0]['URL'],\
                                             art.link[0]['URL'])
-    #DEBUG: choose earlier date bewtween 'created' and 'issued'
+    
     #http://stackoverflow.com/questions/8142364/how-to-compare-two-dates
-    if 'issued' in art.keys(): 
-        if 'date-parts' in art['issued'].keys():
-            if len(art['issued']['date-parts'][0])>=1:
-                art['year']=art['issued']['date-parts'][0][0]
-            if len(art['issued']['date-parts'][0])>=2:
-                art['month']=art['issued']['date-parts'][0][1]
-            if len(art['issued']['date-parts'][0])>=3:
-                art['day']=art['issued']['date-parts'][0][2]
+    if 'created' in art.keys() and 'issued' in art.keys():
+        if art['created'].has_key('date-parts') and art['issued'].has_key('date-parts'):
+            if datetimelist( art['created']['date-parts'][0] ) <=\
+               datetimelist( art['issued']['date-parts'][0] ):
+                kd='created'
+            else:
+                kd='issued'
+                
+            if len(art[kd]['date-parts'][0])>=1:
+                art['year']=art[kd]['date-parts'][0][0]
+            if len(art[kd]['date-parts'][0])>=2:
+                art['month']=art[kd]['date-parts'][0][1]
+            if len(art[kd]['date-parts'][0])>=3:
+                art['day']=art[kd]['date-parts'][0][2]                  
                 
     if output=='udea':
         #special output for udea spreasheet format
@@ -184,6 +191,16 @@ def add_colciencias_issn(art,Colciencias=True):
                 f.close()
 
         return art
+    
+def datetimelist(l):
+    if len(l)==1:
+        return datetime(l[0],12,31)
+    elif len(l)==2:
+        d=30
+        if l[1]==2: d=28
+        return datetime(l[0],l[1],30)
+    else:
+        return datetime(l[0],l[1],l[2])
     
 if __name__ == "__main__":
     
