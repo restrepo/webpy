@@ -46,6 +46,8 @@ def OUTPUT(art,output='udea',verbose=True):
     if 'link' in art.keys():
         art['redirect']='<a href="%s">%s</a>' %(art.link[0]['URL'],\
                                             art.link[0]['URL'])
+    #DEBUG: choose earlier date bewtween 'created' and 'issued'
+    #http://stackoverflow.com/questions/8142364/how-to-compare-two-dates
     if 'issued' in art.keys(): 
         if 'date-parts' in art['issued'].keys():
             if len(art['issued']['date-parts'][0])>=1:
@@ -142,7 +144,47 @@ def OUTPUT(art,output='udea',verbose=True):
 
     
     return {'udea_html':rhtml,'udea_xml':rxml,'article':art}
+
+def get_colciencias(art,publindex):
+    colciencias=publindex[(publindex.TITULO.str.lower()).str.contains(\
+           art['container-title'].lower())].sort('CATEGORIA')[:1]    
+    if len(colciencias)==0: #Journal name not found. Try by ISSN
+    
+        if 'ISSN' in art.keys():
+            if type(art['ISSN'])==list and len(art['ISSN'])>0:
+                colciencias=pd.DataFrame()
+                for issn in art['ISSN']:
+                    colciencias=colciencias.append( publindex[publindex['ISSN']==issn] )
+                    
+
+                        
+    return colciencias.sort('CATEGORIA')[:1]
+
+def add_colciencias_issn(art,Colciencias=True):
+    if Colciencias:    
+        if 'container-title' in art.keys():
+            publindex=read_google_cvs(gss_key='1sAN9w7QYxmONArmhfWMOFoebmGKf1qnkKdHy4OAsjD0',gss_query='select+*')
+            df_colciencias=get_colciencias(art,publindex)
+            if len(df_colciencias)==0:
+                publindex=read_google_cvs(gss_key='1umgapW8KOIPqmu_hyjon3n2SXbnbDlmnRnXzjUHcXHE',gss_query='select+*')
+                df_colciencias=get_colciencias(art,publindex)
+                #store in database issn.csv and update manually
             
+            if len(df_colciencias)>0:
+                art['ISSN_colciencias']=df_colciencias['ISSN'].values[0].decode('utf-8')
+                art['ISSN_type']       =df_colciencias['CATEGORIA'].values[0].decode('utf-8')
+                art['country']         =df_colciencias['country'].values[0].decode('utf-8')
+                art['city']            =df_colciencias['city'].values[0].decode('utf-8')
+                art['lenguage']        =df_colciencias['language'].values[0].decode('utf-8')                
+                
+        else:
+            if Colciencias:
+                f=open("ERRORS",'a')
+                f.write("art[container-title]  empty for DOI: %s" %art['DOI'])
+                f.close()
+
+        return art
+    
 if __name__ == "__main__":
     
     cvsout=pd.DataFrame()
@@ -157,18 +199,10 @@ if __name__ == "__main__":
         r.json()
         if r.json():
             art=pd.Series(r.json())
-        
-        if Colciencias:
-            publindex=read_google_cvs(gss_key='1sAN9w7QYxmONArmhfWMOFoebmGKf1qnkKdHy4OAsjD0',gss_query='select+*')
-            art['ISSN_colciencias']=publindex[publindex.TITULO==art['container-title']].ISSN.values[0]
-            art['ISSN_type']=publindex[publindex.TITULO==art['container-title']]['CATEGORIA'].values[0]
-            art['country']=publindex[publindex.TITULO==art['container-title']]['country'].values[0].decode('utf-8')
-            art['city']=publindex[publindex.TITULO==art['container-title']]['city'].values[0].decode('utf-8')
-            art['language']=publindex[publindex.TITULO==art['container-title']]['language'].values[0].decode('utf-8')
-        else:
-            art['ISSN_colciencias']=''
-            art['ISSN_type']=''
-        
+
+            
+        art=add_colciencias_issn(art,Colciencias=True)    
+            
         xname='revista.xml'
         if art.shape[0]>0:
             ro=OUTPUT(art,output=output)
@@ -176,7 +210,6 @@ if __name__ == "__main__":
             f=open(xname,'w')
             f.write(ro['udea_xml'].encode('utf-8'))
             f.close()
-
 
         if verbose:
             url='http://inspirehep.net/search?p=%s&of=hd' %doi
