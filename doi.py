@@ -1,9 +1,65 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''
 Search doi by title and fist author surname
     based on https://github.com/torfbolt/DOI-finder
     See: http://www.crossref.org/guestquery/#textsearch
 '''
+
+lower_first_char = lambda s: s[:1].lower() + s[1:] if s else ''
+def search_doi(surname='Florez',\
+    title=r'Baryonic violation of R-parity from anomalous $U(1)_H$',other=''):
+    '''
+    Search doi from http://search.crossref.org/ 
+    '''
+    import re
+    import requests
+    doi={}
+    search=''
+    if surname:
+        search=surname
+    if title:
+        if len(search)>0:
+            search=search+', '+title
+    if other:
+        if len(search)>0:
+            search=search+', '+other
+            
+    r=requests.get('http://search.crossref.org/?q=%s' %search)
+    urldoi='http://dx.doi.org/'
+    doitmp=r.text.split(urldoi)[1].split("\'>")[0]
+    if doitmp:
+        json='https://api.crossref.org/v1/works/'
+        rr=requests.get( json+urldoi+doitmp )
+        if rr.json().has_key('message'):
+            chktitle = re.sub(r"\$.*?\$","",title) # better remove all math expressions
+            chktitle = re.sub(r"[^a-zA-Z0-9 ]", " ", chktitle).split(' ')
+            if chktitle:
+                if not -1 in [(rr.json()["message"]['title'][0]).find(w)  for w in chktitle]:
+                    doi=rr.json()["message"]
+                    
+    return doi
+    
+def general_search_doi(surname='Florez',\
+    title=r'Baryonic violation of R-parity from anomalous $U(1)_H$'):
+    '''
+    Search doi from http://search.crossref.org/ with special format
+    '''
+    doi=search_doi(surname,title)
+    if doi.has_key('author'):
+        doi['Author']=doi['author'][0]['family']
+    if doi.has_key('title'):                
+        doi['Article Title']=doi['title'][0]                                            
+    if doi.has_key('container-title') and len(doi['container-title'])==2:                    
+        doi['Journal Title']=doi['container-title'][1]                        
+    if doi.has_key('published-online'):                    
+        doi['Year']=str(doi['published-online']['date-parts'][0][0])
+    for k in ['Volume','Issue','Page']:                    
+        if doi.has_key(lower_first_char(k)):                        
+            doi[k]=doi['volume']                                                 
+                        
+    return doi
+
 def searchdoi(title='a model of  leptons', surname='Weinberg'):
     """
     based on https://github.com/torfbolt/DOI-finder
@@ -24,10 +80,6 @@ def searchdoi(title='a model of  leptons', surname='Weinberg'):
     import re
     from bs4 import BeautifulSoup
     
-    title = re.sub(r"\$.*?\$","",title) # better remove all math expressions
-    title = re.sub(r"[^a-zA-Z0-9 ]", " ", title) #remove non standard characters
-    surname = re.sub(r"[{}'\\]","", surname) #remove non standard characters
-
     browser = mechanize.Browser()
     browser.set_handle_robots(False)
     browser.addheaders = [('User-agent', 'Firefox')] 
@@ -66,13 +118,15 @@ def searchdoi(title='a model of  leptons', surname='Weinberg'):
         
     if doi:
         if doi.has_key('ISSN') and doi.has_key('Persistent Link'):
-            doi['ISSN']=re.sub('([a-zA-Z0-9]{4})([a-zA-Z0-9]{4})','\\1-\\2',doi['ISSN'])
-            doi[u'DOI']=doi['Persistent Link']
+            doi[u'URL']=doi['Persistent Link']
+            doi[u'DOI']=doi['Persistent Link'].split('http://dx.doi.org/')[-1]
+
             
     return doi
 
 if __name__ == "__main__":
     import sys
+    import re
     title='';first_author_surname=''
     if sys.argv[1]:
         title=sys.argv[1]
@@ -80,26 +134,30 @@ if __name__ == "__main__":
         first_author_surname=sys.argv[2]
         
     d=searchdoi(title,first_author_surname)
+    if not d:
+        print 'General search:<br/>'
+        d=general_search_doi(first_author_surname,title)
+        
     ref='';sep=','
     for k in ['Author','Article Title','Journal Title','Volume','Issue','Page','Year']:
         if d.has_key(k):
+            if k=='Author':
+                d['Author'] = re.sub(r"[^a-zA-Z0-9 ]", " ",d['Author'] ) #remove non standard characters 
             if k=='Volume':
-                d[k]='<strong>%s</strong>' %d[k]
+                d[k]='<strong>%s</strong>' %d[k]#.decode('utf-8')
             if k=='Year':
                 sep=''
             ref=ref+d[k]+sep
 
-    if d.has_key('DOI'):
+    if d.has_key('URL'):
         print '''
             <br/>DOI: <a href="%s">%s</a><br/>
             Ref: %s<br/>
             <br>
             CODE at <a href="https://github.com/restrepo/webpy">GitHub</a>: doi.py<br/><br/>
-        ''' %(d['DOI'],d['DOI'],ref)
-        print 'Official search at <a href="http://www.crossref.org/guestquery/#textsearch">crossref</a>'
+        ''' %(d['URL'],d['URL'],ref) #.encode('utf-8'))
+        print '''Official search at <a href="http://www.crossref.org/guestquery/#textsearch">crossref</a><br/>
+        or <a href="http://search.crossref.org/">Search Crossref</a><br/>'''
     else:
-        print '<br/>DOI lookup failed: try in: <a href="http://www.crossref.org/guestquery/#textsearch">crossref</a>'
-    
-        
-    
+        print '<br/>DOI lookup failed: try in <a href="http://search.crossref.org/">Crossref</a><br/>'
     

@@ -12,6 +12,7 @@ First author surname:<br/>
 <?php
   if ($_GET["surname"]){     
     $command = escapeshellcmd('./doi.py "'.$_GET["title"].'" "'.$_GET["surname"].'"');
+    //echo $command;
     $output = shell_exec($command);
     echo $output;
   }
