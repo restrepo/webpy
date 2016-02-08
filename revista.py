@@ -88,6 +88,7 @@ def OUTPUT(art,output='udea',verbose=True):
             prtd='0'
         art['date-month']=','.join(list(prtm+str( tl.tm_mon  )))
         art['date-day']=','.join(list(prtd+str( tl.tm_mday  ))) 
+        
             
     if output=='udea':
         names=OrderedDict()
@@ -189,6 +190,13 @@ def add_colciencias_issn(art,Colciencias=True):
                 f=open("ERRORS",'a')
                 f.write("art[container-title]  empty for DOI: %s" %art['DOI'])
                 f.close()
+                
+        if 'publisher' in art and len(art['country'])==0:
+            if  art['publisher'].str.contains('Elsevier'):
+                art['country']='Holanda'
+                art['city']='Amsterdam'
+                art['language']='English'
+
 
         return art
     
@@ -201,6 +209,18 @@ def datetimelist(l):
         return datetime(l[0],l[1],30)
     else:
         return datetime(l[0],l[1],l[2])
+
+def get_doi(doi,crossref=False):
+    import requests
+    if not crossref:
+        r=requests.get('http://dx.doi.org/%s' %doi.split('http://dx.doi.org/')[-1],\
+                       headers ={'Accept': 'application/citeproc+json'})
+        rjson=r.json()
+    else:
+        r=requests.get('http://api.crossref.org/works/%s' %doi.split('http://dx.doi.org/')[-1])
+        rjson=r.json()['message']
+        
+    return  rjson
     
 if __name__ == "__main__":
     
@@ -209,16 +229,12 @@ if __name__ == "__main__":
     output='udea'
     if sys.argv[1]:
         doi=sys.argv[1]
-        
-        r=requests.get('http://dx.doi.org/%s' %doi.split('http://dx.doi.org/')[-1],\
-                       headers ={'Accept': 'application/citeproc+json'})
-        
-        r.json()
-        if r.json():
-            art=pd.Series(r.json())
+        rjson=get_doi(doi)
+        if rjson:
+            art=pd.Series(rjson)
 
             
-        art=add_colciencias_issn(art,Colciencias=True)    
+        art=add_colciencias_issn(art,Colciencias)
             
         xname='revista.xml'
         if art.shape[0]>0:
