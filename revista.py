@@ -74,7 +74,7 @@ def OUTPUT(art,output='udea',verbose=True):
         if 'page' in art.keys():
             pages=art['page'].split('-')
             if len(pages)==2:
-                art['pages']=','.join(list(str( -eval(art['page']) ) ))
+                art['pages']=','.join(list(str( -eval(art['page'])+1 ) ))
         
         if not 'article-number' in art.keys():
             art['article-number']=','.join(list(str(pages[0])))
