@@ -48,21 +48,30 @@ def OUTPUT(art,output='udea',verbose=True):
         art['redirect']='<a href="%s">%s</a>' %(art.link[0]['URL'],\
                                             art.link[0]['URL'])
     
+    
     #http://stackoverflow.com/questions/8142364/how-to-compare-two-dates
-    if 'created' in art.keys() and 'issued' in art.keys():
-        if art['created'].has_key('date-parts') and art['issued'].has_key('date-parts'):
-            if datetimelist( art['created']['date-parts'][0] ) <=\
-               datetimelist( art['issued']['date-parts'][0] ):
-                kd='created'
-            else:
-                kd='issued'
+    if 'created' in art.keys():
+        if art['created']: #assume that 'date-parts' is defined
+            kd='created'
+        if 'issued' in art.keys():
+            if art['issued']:
+                kd='issued' # overwrite previous kade
+            if art['created'] and art['issued']: #requires both!
+                if datetimelist( art['created']['date-parts'][0] ) <=\
+                   datetimelist( art['issued']['date-parts'][0] ):
+                    kd='created'
+                else:
+                    kd='issued'
+    else:
+        kd='unknown'
+        art[kd]={'date-parts':[[6666,12,31]]}
                 
-            if len(art[kd]['date-parts'][0])>=1:
-                art['year']=art[kd]['date-parts'][0][0]
-            if len(art[kd]['date-parts'][0])>=2:
-                art['month']=art[kd]['date-parts'][0][1]
-            if len(art[kd]['date-parts'][0])>=3:
-                art['day']=art[kd]['date-parts'][0][2]                  
+    if len(art[kd]['date-parts'][0])>=1:
+        art['year']=art[kd]['date-parts'][0][0]
+    if len(art[kd]['date-parts'][0])>=2:
+        art['month']=art[kd]['date-parts'][0][1]
+    if len(art[kd]['date-parts'][0])>=3:
+        art['day']=art[kd]['date-parts'][0][2]                  
                 
     if output=='udea':
         #special output for udea spreasheet format
@@ -71,11 +80,16 @@ def OUTPUT(art,output='udea',verbose=True):
             if dp in art.keys():
                 art[dp]=','.join(list(str(art[dp])))
                 
+        #Prefered format for page is 'article-number'. Choose page or issue if not 'article-number'
         if 'page' in art.keys():
             pages=art['page'].split('-')
             if len(pages)==2:
                 art['pages']=','.join(list(str( -eval(art['page'])+1 ) ))
-        
+        elif 'issue' in art.keys():
+            pages=[art['issue']]
+        else:
+            pages=['']
+            
         if not 'article-number' in art.keys():
             art['article-number']=','.join(list(str(pages[0])))
                     
@@ -192,7 +206,7 @@ def add_colciencias_issn(art,Colciencias=True):
                 f.close()
                 
         if 'publisher' in art and len(art['country'])==0:
-            if  art['publisher'].str.contains('Elsevier'):
+            if  art['publisher'].find('Elsevier')!=-1:
                 art['country']='Holanda'
                 art['city']='Amsterdam'
                 art['language']='English'
