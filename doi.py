@@ -27,16 +27,17 @@ def search_doi(surname='Florez',\
             
     r=requests.get('http://search.crossref.org/?q=%s' %search)
     urldoi='http://dx.doi.org/'
-    doitmp=r.text.split(urldoi)[1].split("\'>")[0]
+    doitmp=r.text.split(urldoi)[1].split("\'>")[0].replace('&lt;','<').replace('&gt;','>')
     if doitmp:
         json='https://api.crossref.org/v1/works/'
         rr=requests.get( json+urldoi+doitmp )
-        if rr.json().has_key('message'):
-            chktitle = re.sub(r"\$.*?\$","",title) # better remove all math expressions
-            chktitle = re.sub(r"[^a-zA-Z0-9 ]", " ", chktitle).split(' ')
-            if chktitle:
-                if not -1 in [(rr.json()["message"]['title'][0]).find(w)  for w in chktitle]:
-                    doi=rr.json()["message"]
+        if rr.status_code==200:
+            if rr.json().has_key('message'):
+                chktitle = re.sub(r"\$.*?\$","",title) # better remove all math expressions
+                chktitle = re.sub(r"[^a-zA-Z0-9 ]", " ", chktitle).split(' ')
+                if chktitle:
+                    if not -1 in [(rr.json()["message"]['title'][0]).find(w)  for w in chktitle]:
+                        doi=rr.json()["message"]
                     
     return doi
     
