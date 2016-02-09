@@ -28,6 +28,7 @@ def search_doi(surname='Florez',\
     r=requests.get('http://search.crossref.org/?q=%s' %search)
     urldoi='http://dx.doi.org/'
     doitmp=r.text.split(urldoi)[1].split("\'>")[0].replace('&lt;','<').replace('&gt;','>')
+    #check doi is right by searching for all words in doi -> output title
     if doitmp:
         json='https://api.crossref.org/v1/works/'
         rr=requests.get( json+urldoi+doitmp )
