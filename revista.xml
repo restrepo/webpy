@@ -2,11 +2,11 @@
 <?xml-stylesheet type="text/xsl" media="screen" href="/~d/styles/atom10full.xsl"?><?xml-stylesheet type="text/css" media="screen" href="http://feeds.feedburner.com/~d/styles/itemcontent.css"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/" xmlns:blogger="http://schemas.google.com/blogger/2008" xmlns:georss="http://www.georss.org/georss" xmlns:gd="http://schemas.google.com/g/2005" xmlns:thr="http://purl.org/syndication/thread/1.0" xmlns:feedburner="http://rssnamespace.org/feedburner/ext/1.0">
 <entry>
-<title type="text">Título del artículo</title><published> Baryonic violation of  R  parity from anomalous  U ( 1  ) H   </published></entry>
+<title type="text">Título del artículo</title><published>Diboson anomaly: Heavy Higgs resonance and QCD vectorlike exotics</published></entry>
 <entry>
 <title type="text">Nombre de la revista</title><published>Physical Review D</published></entry>
 <entry>
-<title type="text">DOI</title><published>10.1103/physrevd.87.095010</published></entry>
+<title type="text">DOI</title><published>10.1103/physrevd.93.015012</published></entry>
 <entry>
 <title type="text">Institución que publica</title><published>American Physical Society (APS)</published></entry>
 <entry>
@@ -18,15 +18,15 @@
 <entry>
 <title type="text">Idioma</title><published></published></entry>
 <entry>
-<title type="text">Año</title><published>2,0,1,3</published></entry>
+<title type="text">Año</title><published>2,0,1,6</published></entry>
 <entry>
-<title type="text">Mes</title><published>5</published></entry>
+<title type="text">Mes</title><published>1</published></entry>
 <entry>
-<title type="text">Día</title><published>1,6</published></entry>
+<title type="text">Día</title><published>2,1</published></entry>
 <entry>
-<title type="text">Volumen</title><published>8,7</published></entry>
+<title type="text">Volumen</title><published>9,3</published></entry>
 <entry>
-<title type="text">Número</title><published>0,9,5,0,1,0</published></entry>
+<title type="text">Número</title><published>0,1,5,0,1,2</published></entry>
 <entry>
 <title type="text">Nro páginas</title><published></published></entry>
 <entry>
@@ -42,17 +42,17 @@
 <entry>
 <title type="text">Fecha presentación: Mes</title><published>0,2</published></entry>
 <entry>
-<title type="text">Fecha presentación: Día</title><published>0,8</published></entry>
+<title type="text">Fecha presentación: Día</title><published>0,9</published></entry>
 <entry>
-<title type="text">Autores</title><published>Andres Florez <br/>
-Diego Restrepo <br/>
-Mauricio Velasquez <br/>
-Oscar Zapata <br/>
+<title type="text">Autores</title><published>D. Aristizabal Sierra <br/>
+J. Herrero-Garcia <br/>
+D. Restrepo <br/>
+A. Vicente <br/>
 </published></entry>
 <entry>
 <title type="text">Clasificación Colciencias</title><published>A1</published></entry>
 <entry>
-<title type="text">ISSN</title><published>[u'1550-7998', u'1550-2368']</published></entry>
+<title type="text">ISSN</title><published>[u'2470-0010', u'2470-0029']</published></entry>
 <entry>
-<title type="text">URL</title><published><a href="http://link.aps.org/article/10.1103/PhysRevD.87.095010">http://link.aps.org/article/10.1103/PhysRevD.87.095010</a></published></entry>
+<title type="text">URL</title><published><a href="http://link.aps.org/article/10.1103/PhysRevD.93.015012">http://link.aps.org/article/10.1103/PhysRevD.93.015012</a></published></entry>
 </feed>

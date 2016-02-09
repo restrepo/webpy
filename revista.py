@@ -126,7 +126,7 @@ def OUTPUT(art,output='udea',verbose=True):
                Fill (or fix) for ISSN Colciencias, journal country, city and language at: 
                <a href="https://goo.gl/5nfX7c">https://goo.gl/5nfX7c</a><br/>'''
     if output=='udea':
-        rhtml=rhtml+'<table border="1">'
+        rhtml=rhtml+'<table border="1" index="0">'
 
     if output=='udea':
         rxml=rxml+'<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -255,10 +255,14 @@ if __name__ == "__main__":
         print '<br/>xml output at %s%s <br/>' %(baseurl,xname)
         jname='revista.json'
         print '<br/>Jason output at %s%s <br/>' %(baseurl,jname)
+        print '<br/>csv output at %srevista.csv <br/>' %baseurl
         print '<br/><br/>Code at <a href="https://github.com/restrepo/webpy">Github</a></br>'
         
         with open(jname, 'w') as fp:
             json.dump(ro['article'].to_dict(), fp)
+            
+        df=pd.DataFrame()
+        df.append(ro['article'],ignore_index=True).to_csv('revista.csv',encoding='utf-8',index=False)
         #json load:
         #with open('data.json', 'r') as fp:
         #data = json.load(fp)
