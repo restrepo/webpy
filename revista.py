@@ -35,6 +35,7 @@ def read_google_cvs(gss_url="http://spreadsheets.google.com",\
 
 def OUTPUT(art,output='udea',verbose=True):
     import time
+    import re
     from collections import OrderedDict
     a=''
     if 'author' in art.keys():
@@ -57,11 +58,19 @@ def OUTPUT(art,output='udea',verbose=True):
             if art['issued']:
                 kd='issued' # overwrite previous kade
             if art['created'] and art['issued']: #requires both!
-                if datetimelist( art['created']['date-parts'][0] ) <=\
-                   datetimelist( art['issued']['date-parts'][0] ):
+                if   len(art['created']['date-parts'][0])>=3 and len(art['issued']['date-parts'][0])< 3:
                     kd='created'
-                else:
+                elif len(art['created']['date-parts'][0])< 3 and len(art['issued']['date-parts'][0])>=3:
                     kd='issued'
+                elif len(art['created']['date-parts'][0])>=3 and len(art['issued']['date-parts'][0])>=3:
+                    if datetimelist( art['created']['date-parts'][0] ) <=\
+                       datetimelist( art['issued']['date-parts'][0] ):
+                        kd='created'
+                    else:
+                        kd='issued'
+                else:
+                    kd='created'
+
     else:
         kd='unknown'
         art[kd]={'date-parts':[[6666,12,31]]}
@@ -84,7 +93,8 @@ def OUTPUT(art,output='udea',verbose=True):
         if 'page' in art.keys():
             pages=art['page'].split('-')
             if len(pages)==2:
-                art['pages']=','.join(list(str( -eval(art['page'])+1 ) ))
+                clean_pages=re.sub( r'\-0+([0-9])',r'-\1',re.sub( r'^0+([0-9])',r'\1',art['page'] ) )
+                art['pages']=','.join(list(str( -eval(clean_pages)+1 ) ))
         elif 'issue' in art.keys():
             pages=[art['issue']]
         else:
