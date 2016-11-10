@@ -178,19 +178,22 @@ def OUTPUT(art,output='udea',verbose=True):
     return {'udea_html':rhtml,'udea_xml':rxml,'article':art}
 
 def get_colciencias(art,publindex):
-    colciencias=publindex[(publindex.TITULO.str.lower()).str.contains(\
-           art['container-title'].lower())].sort('CATEGORIA')[:1]    
-    if len(colciencias)==0: #Journal name not found. Try by ISSN
+    if 'CATEGORIA' in art:
+        colciencias=publindex[(publindex.TITULO.str.lower()).str.contains(\
+            art['container-title'].lower())].sort('CATEGORIA')[:1]    
+        if len(colciencias)==0: #Journal name not found. Try by ISSN
     
-        if 'ISSN' in art.keys():
-            if type(art['ISSN'])==list and len(art['ISSN'])>0:
-                colciencias=pd.DataFrame()
-                for issn in art['ISSN']:
-                    colciencias=colciencias.append( publindex[publindex['ISSN']==issn] )
+            if 'ISSN' in art.keys():
+                if type(art['ISSN'])==list and len(art['ISSN'])>0:
+                    colciencias=pd.DataFrame()
+                    for issn in art['ISSN']:
+                        colciencias=colciencias.append( publindex[publindex['ISSN']==issn] )
                     
 
                         
-    return colciencias.sort('CATEGORIA')[:1]
+        return colciencias.sort('CATEGORIA')[:1]
+    else:
+        return pd.DataFrame()
 
 def add_colciencias_issn(art,Colciencias=True):
     if Colciencias:    
@@ -203,23 +206,27 @@ def add_colciencias_issn(art,Colciencias=True):
                 #store in database issn.csv and update manually
             
             if len(df_colciencias)>0:
-                art['ISSN_colciencias']=df_colciencias['ISSN'].values[0].decode('utf-8')
-                art['ISSN_type']       =df_colciencias['CATEGORIA'].values[0].decode('utf-8')
-                art['country']         =df_colciencias['country'].values[0].decode('utf-8')
-                art['city']            =df_colciencias['city'].values[0].decode('utf-8')
-                art['lenguage']        =df_colciencias['language'].values[0].decode('utf-8')                
+                for k in ['ISSN_colciencias','ISSN_type','country','city','lenguage']:
+                    if k in df_colciencias:
+                        art[k]=df_colciencias[k.split('_')[0]].values[0].decode('utf-8')
+                #art['ISSN_colciencias']=df_colciencias['ISSN'].values[0].decode('utf-8')
+                #art['ISSN_type']       =df_colciencias['CATEGORIA'].values[0].decode('utf-8')
+                #art['country']         =df_colciencias['country'].values[0].decode('utf-8')
+                #art['city']            =df_colciencias['city'].values[0].decode('utf-8')
+                #art['lenguage']        =df_colciencias['language'].values[0].decode('utf-8')                
                 
         else:
             if Colciencias:
                 f=open("ERRORS",'a')
                 f.write("art[container-title]  empty for DOI: %s" %art['DOI'])
                 f.close()
-                
-        if 'publisher' in art and len(art['country'])==0:
-            if  art['publisher'].find('Elsevier')!=-1:
-                art['country']='Holanda'
-                art['city']='Amsterdam'
-                art['language']='English'
+
+        if 'country' in art:
+            if 'publisher' in art and len(art['country'])==0:
+                if  art['publisher'].find('Elsevier')!=-1:
+                    art['country']='Holanda'
+                    art['city']='Amsterdam'
+                    art['language']='English'
 
 
         return art
