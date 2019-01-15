@@ -2,11 +2,19 @@
 <?xml-stylesheet type="text/xsl" media="screen" href="/~d/styles/atom10full.xsl"?><?xml-stylesheet type="text/css" media="screen" href="http://feeds.feedburner.com/~d/styles/itemcontent.css"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/" xmlns:blogger="http://schemas.google.com/blogger/2008" xmlns:georss="http://www.georss.org/georss" xmlns:gd="http://schemas.google.com/g/2005" xmlns:thr="http://purl.org/syndication/thread/1.0" xmlns:feedburner="http://rssnamespace.org/feedburner/ext/1.0">
 <entry>
-<title type="text">Título del artículo</title><published>Bound-state dark matter and Dirac neutrino masses</published></entry>
+<title type="text">Título del artículo</title><published>Probing a simplified 
+W′
+ model of 
+R(D(*))
+ anomalies using 
+b
+ tags, 
+τ
+ leptons, and missing energy</published></entry>
 <entry>
 <title type="text">Nombre de la revista</title><published>Physical Review D</published></entry>
 <entry>
-<title type="text">DOI</title><published>10.1103/physrevd.97.115032</published></entry>
+<title type="text">DOI</title><published>10.1103/physrevd.98.055016</published></entry>
 <entry>
 <title type="text">Institución que publica</title><published>American Physical Society (APS)</published></entry>
 <entry>
@@ -20,13 +28,13 @@
 <entry>
 <title type="text">Año</title><published>2,0,1,8</published></entry>
 <entry>
-<title type="text">Mes</title><published>6</published></entry>
+<title type="text">Mes</title><published>9</published></entry>
 <entry>
-<title type="text">Día</title><published>1,9</published></entry>
+<title type="text">Día</title><published>1,3</published></entry>
 <entry>
-<title type="text">Volumen</title><published>9,7</published></entry>
+<title type="text">Volumen</title><published>9,8</published></entry>
 <entry>
-<title type="text">Número</title><published>1,1,5,0,3,2</published></entry>
+<title type="text">Número</title><published>0,5,5,0,1,6</published></entry>
 <entry>
 <title type="text">Nro páginas</title><published></published></entry>
 <entry>
@@ -38,21 +46,22 @@
 <entry>
 <title type="text">Otro</title><published></published></entry>
 <entry>
-<title type="text">Fecha presentación: Año</title><published>2,0,1,8</published></entry>
+<title type="text">Fecha presentación: Año</title><published>2,0,1,9</published></entry>
 <entry>
-<title type="text">Fecha presentación: Mes</title><published>0,6</published></entry>
+<title type="text">Fecha presentación: Mes</title><published>0,1</published></entry>
 <entry>
-<title type="text">Fecha presentación: Día</title><published>2,7</published></entry>
+<title type="text">Fecha presentación: Día</title><published>1,5</published></entry>
 <entry>
-<title type="text">Autores</title><published>M. Reig <br/>
-D. Restrepo <br/>
-J. W. F. Valle <br/>
-O. Zapata <br/>
+<title type="text">Autores</title><published>Mohammad Abdullah <br/>
+Julián Calle <br/>
+Bhaskar Dutta <br/>
+Andrés Flórez <br/>
+Diego Restrepo <br/>
 </published></entry>
 <entry>
 <title type="text">Clasificación Colciencias</title><published></published></entry>
 <entry>
-<title type="text">ISSN</title><published>[u'2470-0010', u'2470-0029']</published></entry>
+<title type="text">ISSN</title><published>['2470-0010', '2470-0029']</published></entry>
 <entry>
-<title type="text">URL</title><published><a href="https://link.aps.org/article/10.1103/PhysRevD.97.115032">https://link.aps.org/article/10.1103/PhysRevD.97.115032</a></published></entry>
+<title type="text">URL</title><published><a href="https://link.aps.org/article/10.1103/PhysRevD.98.055016">https://link.aps.org/article/10.1103/PhysRevD.98.055016</a></published></entry>
 </feed>
