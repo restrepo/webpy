@@ -177,9 +177,9 @@ def OUTPUT(art,output='udea',verbose=True):
     return {'udea_html':rhtml,'udea_xml':rxml,'article':art}
 
 def get_colciencias(art,publindex):
-    if 'CATEGORIA' in art:
+    if 'CATEGORIA' in publindex:
         colciencias=publindex[(publindex.TITULO.str.lower()).str.contains(\
-            art['container-title'].lower())].sort('CATEGORIA')[:1]    
+            art['container-title'].lower())].sort_values('CATEGORIA')[:1]    
         if len(colciencias)==0: #Journal name not found. Try by ISSN
     
             if 'ISSN' in art.keys():
@@ -190,14 +190,16 @@ def get_colciencias(art,publindex):
                     
 
                         
-        return colciencias.sort('CATEGORIA')[:1]
+        return colciencias.sort_values('CATEGORIA')[:1]
     else:
         return pd.DataFrame()
 
 def add_colciencias_issn(art,Colciencias=True):
+    
     if Colciencias:    
         if 'container-title' in art.keys():
             publindex=read_google_cvs(gss_key='1sAN9w7QYxmONArmhfWMOFoebmGKf1qnkKdHy4OAsjD0',gss_query='select+*')
+            publindex=publindex.rename({'Unnamed: 0':'CATEGORIA'},axis='columns')
             df_colciencias=get_colciencias(art,publindex)
             if len(df_colciencias)==0:
                 publindex=read_google_cvs(gss_key='1umgapW8KOIPqmu_hyjon3n2SXbnbDlmnRnXzjUHcXHE',gss_query='select+*')
@@ -207,7 +209,7 @@ def add_colciencias_issn(art,Colciencias=True):
             if len(df_colciencias)>0:
                 for k in ['ISSN_colciencias','ISSN_type','country','city','lenguage']:
                     if k in df_colciencias:
-                        art[k]=df_colciencias[k.split('_')[0]].values[0].decode('utf-8')
+                        art[k]=df_colciencias[k.split('_')[0]].values[0]#.decode('utf-8')
                 #art['ISSN_colciencias']=df_colciencias['ISSN'].values[0].decode('utf-8')
                 #art['ISSN_type']       =df_colciencias['CATEGORIA'].values[0].decode('utf-8')
                 #art['country']         =df_colciencias['country'].values[0].decode('utf-8')
