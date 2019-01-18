@@ -5,7 +5,7 @@ DOI (and hit ENTER):
 
 <?php
   if ($_GET["doi"]){     
-    $command = escapeshellcmd('./revista_new.py '.$_GET["doi"]);
+    $command = escapeshellcmd('./revista_old.py '.$_GET["doi"]);
     $output = shell_exec($command);
     echo $output;
 
