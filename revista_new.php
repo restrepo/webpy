@@ -10,5 +10,5 @@ DOI (and hit ENTER):
     echo $output;
 
   }
-//phpinfo();
+phpinfo();
 ?>
