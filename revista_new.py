@@ -270,48 +270,100 @@ def get_doi(doi,crossref=False):
         rjson=r.json()['message']
         
     return  rjson
+
+def html_out(art):
+    rhtml='''<!DOCTYPE html>
+    <html lang="en"> 
+    <head>
+    <meta charset="utf-8"/>
+    </head>
+    <body>
+    <h3>Datos generales de la producci&oacute;n</h3>'''
+    try:
+        rhtml=rhtml+'''
+        T&iacute;tulo de la publiaci&oacute;n<br/>
+        <input type="text" value="{}" size="100"><br/>'''.format(art['title'].replace('\n',''))
+    except AttributeError:
+        pass
+
+    rhtml=rhtml+'<table border="0" index="0">'
+    rhtml=rhtml+'<tr><td>N&uacute;mero total de autores</td><td> Idioma original </td></tr>\n'    
+    rhtml=rhtml+'<tr><td><input type="text" value="{}"> </td><td> <input type="text" value="{}">  </td></tr>\n'.format(
+               len(art.author) ,art.language)
+    
+    rhtml=rhtml+'<tr><td>Mes/Año de la publicación</td><td> País de la Publicación </td></tr>\n'
+    rhtml=rhtml+'<tr><td><input type="text" value="{}/{}"> </td><td> <input type="text" value="{}">  </td></tr>\n'.format(
+            str(art.month),str(art.year),art.country)    
+    
+    rhtml=rhtml+'<tr><td>Departamento/Estado de la publicación</td><td> Ciudad de Publicación </td></tr>\n'
+    rhtml=rhtml+'<tr><td><input type="text" value=""> </td><td> <input type="text" value="{}">  </td></tr>\n'.format(
+                  art.city)
+    rhtml=rhtml+'</table>'
+    
+    #Creditos
+    rhtml=rhtml+'<h3>Datos específicos de la producción</h3>'
+    rhtml=rhtml+'<table border="0" index="0">'
+    
+    if art.ISSN_colciencias:
+        ISSN=art.ISSN_colciencias
+    else:
+        ISSN=art.ISSN[0]    
+    rhtml=rhtml+'<tr><td>Nombre de la revista</td><td> ISSN </td></tr>\n'
+    rhtml=rhtml+'<tr><td><input type="text" value="{}"> </td><td> <input type="text" value="{}">  </td></tr>\n'.format(
+            art['container-title'] ,ISSN)
+    
+    try: 
+        OA=pd.DataFrame( art.license ).get('URL').str.lower().str.contains('creativecommons').bool()
+    except AttributeError:
+        OA=False
+    if OA:
+        art['Open_Access']='Sí'
+    else:
+        art['Open_Access']='No'
+    
+    rhtml=rhtml+'<tr><td>Es de acceso abierto</td><td> Documento adjunto(Si es de acceso abierto) </td></tr>\n'
+    rhtml=rhtml+'<tr><td><input type="text" value="{}"> </td><td> <input type="text" value="">  </td></tr>\n'.format(
+           art['Open_Access'])
+
+    url='https://doi.org/{}'.format(art.DOI)
+    rhtml=rhtml+'<tr><td>Registro DOI</td><td> URL del artículo </td></tr>\n'
+    rhtml=rhtml+'<tr><td><input type="text" value="{}"> </td><td> <input type="text" value="{}">  </td></tr>\n'.format(
+            art.DOI,url)
+    
+    rhtml=rhtml+'<tr><td>Número</td><td> Volumen de la revista </td></tr>\n'
+    rhtml=rhtml+'<tr><td><input type="text" value="{}"> </td><td> <input type="text" value="{}">  </td></tr>\n'.format(
+            art.volume ,art['article-number'])
+
+    rhtml=rhtml+'<tr><td>Institución que publica</td><td>  </td></tr>\n'
+    rhtml=rhtml+'<tr><td><input type="text" value="{}"> </td><td>   </td></tr>\n'.format(
+            art.publisher )
+    
+    rhtml=rhtml+'</table>'
+    rhtml=rhtml+'''
+    </body>
+    </html>'''
+    return rhtml
     
 if __name__ == "__main__":
-    
     cvsout=pd.DataFrame()
     Colciencias=True; verbose=False
     output='udea'
-    if sys.argv[1]:
+    if sys.argv[1] !='-f':
         doi=sys.argv[1]
-        rjson=get_doi(doi)
-        if rjson:
-            art=pd.Series(rjson)
-
-            
-        art=add_colciencias_issn(art,Colciencias)
-            
-        xname='revista.xml'
-        if art.shape[0]>0:
-            ro=OUTPUT(art,output=output)
-            print ( ro['udea_html'].encode('utf-8') )
-            f=open(xname,'w')
-            f.write(ro['udea_xml'])#.encode('utf-8'))
-            f.close()
-
-        if verbose:
-            url='http://inspirehep.net/search?p=%s&of=hd' %doi
-            response = urlopen(url)
-            abstract = response.read().split('Abstract')
-            if len(abstract)>1:
-                print ( '<strong>Abstract:</strong>%s' %abstract[1] )
-                
-        baseurl='http://gfif.udea.edu.co/python/'
-        print ( '<br/>xml output at %s%s <br/>' %(baseurl,xname) )
-        jname='revista.json'
-        print ( '<br/>Jason output at %s%s <br/>' %(baseurl,jname) )
-        print ( '<br/>csv output at %srevista.csv <br/>' %baseurl )
-        print ( '<br/><br/>Code at <a href="https://github.com/restrepo/webpy">Github</a></br>' )
-        
-        with open(jname, 'w') as fp:
-            json.dump(ro['article'].to_dict(), fp)
-            
-        df=pd.DataFrame()
-        df.append(ro['article'],ignore_index=True).to_csv('revista.csv',encoding='utf-8',index=False)
-        #json load:
-        #with open('data.json', 'r') as fp:
-        #data = json.load(fp)
+    
+    
+    rjson=get_doi(doi)
+    if rjson:
+        art=pd.Series(rjson)
+    
+    #Add info of Publindex base in maximun category of the Journal
+    art=add_colciencias_issn(art,Colciencias)    
+    
+    # Be sure that all the used keys be proper (re)intialized here:
+    keys=['author','languages','month','year','country','city',
+         'container-title','ISSN','ISSN_colciencias','Open_Access',
+         'volume','article-number','publisher']
+    art=date_parts(art)
+    art=add_blank_missing_keys(art,keys)
+    rhtml=html_out(art)
+    print(rhtml)
