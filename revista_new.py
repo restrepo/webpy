@@ -304,8 +304,8 @@ def html_out(art):
                len(art.author) ,art.language)
     
     rhtml=rhtml+'<tr><td>Mes/A&ntilde;o de la publicaci&oacute;n</td><td> Pa&iacute;s de la Publicaci&oacute;n </td></tr>\n'
-    rhtml=rhtml+'<tr><td><input type="text" value="{}/{}"> </td><td> <input type="text" value="{}">  </td></tr>\n'.format(
-            str(art.month),str(art.year),art.country)    
+    rhtml=rhtml+'<tr><td><input type="text" value="{:02d}/{}"> </td><td> <input type="text" value="{}">  </td></tr>\n'.format(
+            art.month,str(art.year),art.country)    
     
     rhtml=rhtml+'<tr><td>Departamento/Estado de la publicaci&oacute;n</td><td> Ciudad de Publicaci&oacute;n </td></tr>\n'
     rhtml=rhtml+'<tr><td><input type="text" value=""> </td><td> <input type="text" value="{}">  </td></tr>\n'.format(
@@ -378,7 +378,5 @@ if __name__ == "__main__":
     art=date_parts(art)
     art=add_blank_missing_keys(art,keys)
     rhtml=html_out(art)
-    if rhtml:
-        print(rhtml.encode('utf-8'))
-    else:
-        print('ERROR: DOI no encontrado')
+    print(rhtml.encode('utf-8'))
+
