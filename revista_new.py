@@ -9,6 +9,17 @@ pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.max_colwidth',500)
 
+def add_blank_missing_keys(art,keys):
+    '''
+    Check if the keys are in a Pandas Series.
+    If not the key value is initialized with
+    the empty string
+    '''
+    for k in keys:
+        art[k]=art.get(k)
+    #Replace None with empty string
+    return art.fillna('')    
+
 def read_google_cvs(gss_url="http://spreadsheets.google.com",\
     gss_format="csv",\
     gss_key="0AuLa_xuSIEvxdERYSGVQWDBTX1NCN19QMXVpb0lhWXc",\
@@ -30,24 +41,7 @@ def read_google_cvs(gss_url="http://spreadsheets.google.com",\
     gfile=urlopen(issn_url)
     return pd.read_csv(gfile,keep_default_na=gss_keep_default_na)
 
-
-def OUTPUT(art,output='udea',verbose=True):
-    import time
-    import re
-    from collections import OrderedDict
-    a=''
-    if 'author' in art.keys():
-        for d in art.author:
-            a=a+'%s %s <br/>\n' %(d['given'],d['family'])
-    
-            art['autores']=a
-        
-    art['indexacion']='ISI, Scopus'
-    if 'link' in art.keys():
-        art['redirect']='<a href="%s">%s</a>' %(art.link[0]['URL'],\
-                                            art.link[0]['URL'])
-    
-    
+def date_parts(art):
     #http://stackoverflow.com/questions/8142364/how-to-compare-two-dates
     if 'created' in art.keys():
         if art['created']: #assume that 'date-parts' is defined
@@ -78,7 +72,30 @@ def OUTPUT(art,output='udea',verbose=True):
     if len(art[kd]['date-parts'][0])>=2:
         art['month']=art[kd]['date-parts'][0][1]
     if len(art[kd]['date-parts'][0])>=3:
-        art['day']=art[kd]['date-parts'][0][2]                  
+        art['day']=art[kd]['date-parts'][0][2]
+
+    return art
+
+
+def OUTPUT(art,output='udea',verbose=True):
+    import time
+    import re
+    from collections import OrderedDict
+    a=''
+    if 'author' in art.keys():
+        for d in art.author:
+            a=a+'%s %s <br/>\n' %(d['given'],d['family'])
+    
+            art['autores']=a
+        
+    art['indexacion']='ISI, Scopus'
+    if 'link' in art.keys():
+        art['redirect']='<a href="%s">%s</a>' %(art.link[0]['URL'],\
+                                            art.link[0]['URL'])
+    
+    
+    art=date_parts(art)
+
                 
     if output=='udea':
         #special output for udea spreasheet format
@@ -181,7 +198,6 @@ def get_colciencias(art,publindex):
         colciencias=publindex[(publindex.TITULO.str.lower()).str.contains(\
             art['container-title'].lower())].sort_values('CATEGORIA')[:1]    
         if len(colciencias)==0: #Journal name not found. Try by ISSN
-    
             if 'ISSN' in art.keys():
                 if type(art['ISSN'])==list and len(art['ISSN'])>0:
                     colciencias=pd.DataFrame()
@@ -199,7 +215,8 @@ def add_colciencias_issn(art,Colciencias=True):
     if Colciencias:    
         if 'container-title' in art.keys():
             publindex=read_google_cvs(gss_key='1sAN9w7QYxmONArmhfWMOFoebmGKf1qnkKdHy4OAsjD0',gss_query='select+*')
-            publindex=publindex.rename({'Unnamed: 0':'CATEGORIA'},axis='columns')
+            publindex=publindex.rename({'Unnamed: 0':'CATEGORIA',
+                                         'ISSN':'ISSN_colciencias'},axis='columns')
             df_colciencias=get_colciencias(art,publindex)
             if len(df_colciencias)==0:
                 publindex=read_google_cvs(gss_key='1umgapW8KOIPqmu_hyjon3n2SXbnbDlmnRnXzjUHcXHE',gss_query='select+*')
@@ -207,9 +224,9 @@ def add_colciencias_issn(art,Colciencias=True):
                 #store in database issn.csv and update manually
             
             if len(df_colciencias)>0:
-                for k in ['ISSN_colciencias','ISSN_type','country','city','lenguage']:
+                for k in ['ISSN_colciencias','country','city','lenguage']:
                     if k in df_colciencias:
-                        art[k]=df_colciencias[k.split('_')[0]].values[0]#.decode('utf-8')
+                        art[k]=df_colciencias[k].values[0]#.decode('utf-8')
                 #art['ISSN_colciencias']=df_colciencias['ISSN'].values[0].decode('utf-8')
                 #art['ISSN_type']       =df_colciencias['CATEGORIA'].values[0].decode('utf-8')
                 #art['country']         =df_colciencias['country'].values[0].decode('utf-8')
