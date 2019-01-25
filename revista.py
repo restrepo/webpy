@@ -325,10 +325,12 @@ def html_out(art):
             art['container-title'] ,ISSN)
     
     try: 
-        OA=pd.DataFrame( art.license ).get('URL').str.lower().str.contains('creativecommons').bool()
+        OA=pd.DataFrame( art.license ).get('URL').str.lower().str.contains('creativecommons')
+        OA=OA[OA]
     except AttributeError:
-        OA=False
-    if OA:
+        OA=pd.DataFrame()
+
+    if OA.size:
         art['Open_Access']='Si'
     else:
         art['Open_Access']='No'
@@ -352,6 +354,9 @@ def html_out(art):
     
     rhtml=rhtml+'</table>'
     rhtml=rhtml+'''
+    <br/>
+    <br/>
+    Edite manualmente el pa&iacute;s y la ciudad de la revista <a href="https://docs.google.com/spreadsheets/d/1sAN9w7QYxmONArmhfWMOFoebmGKf1qnkKdHy4OAsjD0/edit#gid=1189451937">AQU&Iacute;</a>.  Para futuros usos.
     </body>
     </html>'''
     return rhtml
