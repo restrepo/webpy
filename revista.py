@@ -3,6 +3,7 @@
 import sys
 import json
 import unidecode
+import re
 try:
     from urllib2 import urlopen
 except ImportError:
@@ -81,7 +82,6 @@ def date_parts(art):
         art['day']=art[kd]['date-parts'][0][2]
 
     return art
-
 
 def OUTPUT(art,output='udea',verbose=True):
     import time
@@ -268,7 +268,7 @@ def datetimelist(l):
 def get_doi(doi,crossref=False):
     import requests
     if not crossref:
-        r=requests.get('http://dx.doi.org/%s' %doi.split('http://dx.doi.org/')[-1],\
+        r=requests.get('http://dx.doi.org/%s' %re.split('http[s]*://[a-z\.]*doi.org/',doi)[-1],\
                        headers ={'Accept': 'application/citeproc+json'})
         rjson=r.json()
     else:
@@ -343,10 +343,12 @@ def html_out(art):
     rhtml=rhtml+'<tr><td>Registro DOI</td><td> URL del art&iacute;culo </td></tr>\n'
     rhtml=rhtml+'<tr><td><input type="text" value="{}"> </td><td> <input type="text" value="{}">  </td></tr>\n'.format(
             art.DOI,url)
-    
+    numero=art['article-number']
+    if not numero:
+        numero=art.get('page')
     rhtml=rhtml+'<tr><td>N&uacute;mero</td><td> Volumen de la revista </td></tr>\n'
     rhtml=rhtml+'<tr><td><input type="text" value="{}"> </td><td> <input type="text" value="{}">  </td></tr>\n'.format(
-            art.volume ,art['article-number'])
+            numero,art.volume )
 
     rhtml=rhtml+'<tr><td>Instituci&oacute;n que publica</td><td>  </td></tr>\n'
     rhtml=rhtml+'<tr><td><input type="text" value="{}"> </td><td>   </td></tr>\n'.format(
