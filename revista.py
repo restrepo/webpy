@@ -208,11 +208,17 @@ def get_colciencias(art,publindex):
                 if type(art['ISSN'])==list and len(art['ISSN'])>0:
                     colciencias=pd.DataFrame()
                     for issn in art['ISSN']:
-                        colciencias=colciencias.append( publindex[publindex['ISSN']==issn] )
+                        try:
+                            colciencias=colciencias.append( publindex[publindex['ISSN']==issn] )
+                        except KeyError:
+                            pass
+                            
                     
 
-                        
+    try:                    
         return colciencias.sort_values('CATEGORIA')[:1]
+    except KeyError:
+        return pd.DataFrame()
     else:
         return pd.DataFrame()
 
@@ -301,31 +307,31 @@ def html_out(art):
     rhtml=rhtml+'<table border="0" index="0">'
     rhtml=rhtml+'<tr><td>N&uacute;mero total de autores</td><td> Idioma original </td></tr>\n'    
     rhtml=rhtml+'<tr><td><input type="text" value="{}"> </td><td> <input type="text" value="{}">  </td></tr>\n'.format(
-               len(art.author) ,art.language)
+               len(art.get('author')) ,art.get('language'))
     
     rhtml=rhtml+'<tr><td>Mes/A&ntilde;o de la publicaci&oacute;n</td><td> Pa&iacute;s de la Publicaci&oacute;n </td></tr>\n'
     rhtml=rhtml+'<tr><td><input type="text" value="{:02d}/{}"> </td><td> <input type="text" value="{}">  </td></tr>\n'.format(
-            art.month,str(art.year),art.country)    
+            art.month,str(art.get('year')),art.get('country'))    
     
     rhtml=rhtml+'<tr><td>Departamento/Estado de la publicaci&oacute;n</td><td> Ciudad de Publicaci&oacute;n </td></tr>\n'
     rhtml=rhtml+'<tr><td><input type="text" value=""> </td><td> <input type="text" value="{}">  </td></tr>\n'.format(
-                  art.city)
+                  art.get('city'))
     rhtml=rhtml+'</table>'
     
     #Creditos
     rhtml=rhtml+'<h3>Datos espec&iacute;ficos de la producci&oacute;n</h3>'
     rhtml=rhtml+'<table border="0" index="0">'
     
-    if art.ISSN_colciencias:
-        ISSN=art.ISSN_colciencias
+    if art.get('ISSN_colciencias'):
+        ISSN=art.get('ISSN_colciencias')
     else:
-        ISSN=art.ISSN[0]    
+        ISSN=art.get('ISSN')[0]    
     rhtml=rhtml+'<tr><td>Nombre de la revista</td><td> ISSN </td></tr>\n'
     rhtml=rhtml+'<tr><td><input type="text" value="{}"> </td><td> <input type="text" value="{}">  </td></tr>\n'.format(
-            art['container-title'] ,ISSN)
+            art.get('container-title') ,ISSN)
     
     try: 
-        OA=pd.DataFrame( art.license ).get('URL').str.lower().str.contains('creativecommons')
+        OA=pd.DataFrame( art.get('license') ).get('URL').str.lower().str.contains('creativecommons')
         OA=OA[OA]
     except AttributeError:
         OA=pd.DataFrame()
@@ -339,20 +345,20 @@ def html_out(art):
     rhtml=rhtml+'<tr><td><input type="text" value="{}"> </td><td> <input type="text" value="">  </td></tr>\n'.format(
            art['Open_Access'])
 
-    url='https://doi.org/{}'.format(art.DOI)
+    url='https://doi.org/{}'.format(art.get('DOI'))
     rhtml=rhtml+'<tr><td>Registro DOI</td><td> URL del art&iacute;culo </td></tr>\n'
     rhtml=rhtml+'<tr><td><input type="text" value="{}"> </td><td> <input type="text" value="{}">  </td></tr>\n'.format(
-            art.DOI,url)
+            art.get('DOI'),url)
     numero=art['article-number']
     if not numero:
         numero=art.get('page')
     rhtml=rhtml+'<tr><td>N&uacute;mero</td><td> Volumen de la revista </td></tr>\n'
     rhtml=rhtml+'<tr><td><input type="text" value="{}"> </td><td> <input type="text" value="{}">  </td></tr>\n'.format(
-            numero,art.volume )
+            numero,art.get('volume') )
 
     rhtml=rhtml+'<tr><td>Instituci&oacute;n que publica</td><td>  </td></tr>\n'
     rhtml=rhtml+'<tr><td><input type="text" value="{}"> </td><td>   </td></tr>\n'.format(
-            art.publisher )
+            art.get('publisher') )
     
     rhtml=rhtml+'</table>'
     rhtml=rhtml+'''
